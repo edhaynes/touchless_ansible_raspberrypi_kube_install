@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: install ntp 
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+         ntp
+    - name: set timezone to UTC
+      timezone:
+        name: UTC
+

@@ -1,0 +1,12 @@
+---
+- hosts: all
+  tasks:
+    - name: Update cache, update software
+      become: yes
+      apt:
+        update_cache: yes
+        upgrade: yes
+    - name: reboot machine
+      become: yes
+      reboot:
+ 

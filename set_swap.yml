@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+#    - shell: >
+#        dphys-swapfile swapoff &&
+#        dphys-swapfile uninstall &&
+#        update-rc.d -f dphys-swapfile remove
+     - apt:
+         name: dphys-swapfile
+         state: absent      

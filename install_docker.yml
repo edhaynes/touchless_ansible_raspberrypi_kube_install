@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: check if docker is installed
+      stat:
+        path: /usr/bin/docker
+      register: docker_exists
+    - name: install docker if it doesn't exist
+      shell: >
+        curl -sSL get.docker.com | sh &&  
+        newgrp docker
+      when: docker_exists.stat.exists == false
+    - name: add pi to docker group
+      user:
+        name: pi
+        groups: docker
+        append: yes
+
+        
+  

@@ -1,0 +1,11 @@
+- hosts: all
+  become: yes
+  tasks:
+  - name: Add Kubernetes repository
+    copy:
+      dest: "/etc/apt/sources.list.d/kubernetes.list"
+      content: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+  - name: apt_key_add
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present

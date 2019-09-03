@@ -1,0 +1,16 @@
+---
+- hosts: all
+  tasks:
+    - name: check if docker is installed
+      stat:
+        path: /usr/bin/docker
+      register: docker_exists
+    - name: docker test result
+      debug:
+        msg: docker found
+      when: docker_exists.stat.exists == true
+    - name: docker not found
+      debug:
+        msg: docker not found
+      when: docker_exists.stat.exists == false
+

@@ -1,0 +1,33 @@
+---
+- hosts: master
+  tasks:
+
+    - name: check if kube master initialized
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: kubernetes_master
+
+    - name: initialize kube master if it doesn't exist
+      become: yes
+      command: kubeadm init --token-ttl=0
+      register: kubeadm_init_output
+      when: kubernetes_master.stat.exists == false
+
+    - name: print kube master init output
+      debug: var=kubeadm_init_output.stdout
+
+    - name: apply weave networking
+      shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+    - name: set bridging
+      become: yes
+      command: sysctl net.bridge.bridge-nf-call-iptables=1
+
+    - name: Generate join command
+      command: kubeadm token create --print-join-command
+      register: join_command
+
+    - name: Copy join command to local file
+      local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="~/join-command"
+
+

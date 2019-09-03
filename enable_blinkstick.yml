@@ -1,0 +1,27 @@
+---
+- hosts: all
+  tasks:
+    - pip:
+        name:
+          - pyusb==1.0.0b1
+          - blinkstick       
+        state: present
+        extra_args: --user
+        executable: pip
+    - shell:
+        ~pi/.local/bin/blinkstick --add-udev-rule
+      become: yes
+    - shell:
+        ~pi/.local/bin/blinkstick yellow
+      become: yes
+    - copy:
+        remote_src: yes
+        src: ~pi/.local/bin/blinkstick
+        dest: /usr/local/bin/blinkstick
+        mode: u=rwx,g=rx,o=rx
+      become: yes
+    - reboot:
+      become: yes
+    - shell:
+        ~pi/.local/bin/blinkstick green
+

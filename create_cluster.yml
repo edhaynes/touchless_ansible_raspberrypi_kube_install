@@ -1,0 +1,33 @@
+---
+- hosts: all
+#first put server's public key on pi's so we can authenticate connection
+  tasks:
+    - authorized_key:
+        user: pi
+        state: present
+        key: "{{ lookup('file', '/home/ehaynes/.ssh/id_rsa.pub') }}"    
+#allow passwordless sudo for pi account   
+    - lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+      become: yes
+
+- import_playbook: update_etc_hosts.yml
+- import_playbook: change_hostname.yml
+- import_playbook: add_kube_key.yml
+- import_playbook: update_machines.yml
+- import_playbook: set_swap.yml
+- import_playbook: update_password.yml
+- import_playbook: install_ntp.yml
+- import_playbook: install_docker.yml
+- import_playbook: cgroup_features.yml
+- import_playbook: install_kubernetes.yml
+- import_playbook: init_master.yml
+- import_playbook: init_workers.yml
+- import_playbook: enable_blinkstick.yml
+
+
+ 

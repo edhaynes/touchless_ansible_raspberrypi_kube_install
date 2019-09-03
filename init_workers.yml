@@ -1,0 +1,22 @@
+---
+- hosts: workers
+  tasks:
+
+    - name: check if kube worker initialized
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: kubernetes_worker
+
+    - name: join cluster
+      become: yes
+      command: "{{ lookup('file', '~/join-command') }}"
+      register: join_command
+      when: kubernetes_worker.stat.exists == false
+
+    - name: set bridging
+      become: yes
+      command: sysctl net.bridge.bridge-nf-call-iptables=1
+
+    - name: dump output of join
+      debug: var=join_command.stdout
+
